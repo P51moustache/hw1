@@ -111,14 +111,79 @@
 .headers off
 
 -- Drop existing tables, so you'll start fresh each time this script is run.
--- TODO!
+DROP TABLE IF EXISTS casting;
+DROP TABLE IF EXISTS actor;
+DROP TABLE IF EXISTS movie;
+DROP TABLE IF EXISTS studio;
 
 -- Create new tables, according to your domain model
--- TODO!
+CREATE TABLE studio (
+    id INTEGER PRIMARY KEY,
+    name TEXT
+);
+
+CREATE TABLE movie (
+    id INTEGER PRIMARY KEY,
+    title TEXT,
+    year_released INTEGER,
+    rating TEXT,
+    studio_id INTEGER,
+    FOREIGN KEY (studio_id) REFERENCES studio(id)
+);
+
+CREATE TABLE actor (
+    id INTEGER PRIMARY KEY,
+    name TEXT
+);
+
+CREATE TABLE casting (
+    id INTEGER PRIMARY KEY,
+    movie_id INTEGER,
+    actor_id INTEGER,
+    character_name TEXT,
+    FOREIGN KEY (movie_id) REFERENCES movie(id),
+    FOREIGN KEY (actor_id) REFERENCES actor(id)
+);
 
 -- Insert data into your database that reflects the sample data shown above
 -- Use hard-coded foreign key IDs when necessary
--- TODO!
+INSERT INTO studio (id, name) VALUES
+(1, 'Warner Bros.');
+
+INSERT INTO movie (id, title, year_released, rating, studio_id) VALUES
+(1, 'Batman Begins', 2005, 'PG-13', 1),
+(2, 'The Dark Knight', 2008, 'PG-13', 1),
+(3, 'The Dark Knight Rises', 2012, 'PG-13', 1);
+
+INSERT INTO actor (id, name) VALUES
+(1, 'Christian Bale'),
+(2, 'Michael Caine'),
+(3, 'Liam Neeson'),
+(4, 'Katie Holmes'),
+(5, 'Gary Oldman'),
+(6, 'Heath Ledger'),
+(7, 'Aaron Eckhart'),
+(8, 'Maggie Gyllenhaal'),
+(9, 'Tom Hardy'),
+(10, 'Joseph Gordon-Levitt'),
+(11, 'Anne Hathaway');
+
+INSERT INTO casting (movie_id, actor_id, character_name) VALUES
+(1, 1, 'Bruce Wayne'),
+(1, 2, 'Alfred'),
+(1, 3, 'Ra''s Al Ghul'),
+(1, 4, 'Rachel Dawes'),
+(1, 5, 'Commissioner Gordon'),
+(2, 1, 'Bruce Wayne'),
+(2, 6, 'Joker'),
+(2, 7, 'Harvey Dent'),
+(2, 2, 'Alfred'),
+(2, 8, 'Rachel Dawes'),
+(3, 1, 'Bruce Wayne'),
+(3, 5, 'Commissioner Gordon'),
+(3, 9, 'Bane'),
+(3, 10, 'John Blake'),
+(3, 11, 'Selina Kyle');
 
 -- Prints a header for the movies output
 .print "Movies"
@@ -126,7 +191,9 @@
 .print ""
 
 -- The SQL statement for the movies output
--- TODO!
+SELECT movie.title, movie.year_released, movie.rating, studio.name
+FROM movie
+JOIN studio ON movie.studio_id = studio.id;
 
 -- Prints a header for the cast output
 .print ""
@@ -136,4 +203,7 @@
 
 
 -- The SQL statement for the cast output
--- TODO!
+SELECT movie.title, actor.name, casting.character_name
+FROM casting
+JOIN movie ON casting.movie_id = movie.id
+JOIN actor ON casting.actor_id = actor.id;
